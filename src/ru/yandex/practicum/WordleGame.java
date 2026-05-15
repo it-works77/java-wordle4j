@@ -1,5 +1,10 @@
 package ru.yandex.practicum;
 
+import ru.yandex.practicum.config.WordleConfig;
+import ru.yandex.practicum.controller.MenuController;
+
+import java.util.Scanner;
+
 /*
 в этом классе хранится словарь и состояние игры
     текущий шаг
@@ -14,10 +19,59 @@ package ru.yandex.practicum;
  */
 public class WordleGame {
 
+    private final WordleLogger logger;
+    private MenuController menu;
+
     private String answer;
+    private String targetWord;
+    private Integer steps;
+    private final WordleDictionary dictionary;
 
-    private int steps;
+    public WordleGame(WordleDictionary wd, WordleLogger logger) {
+        dictionary = wd;
+        steps = 0;
+        this.logger = logger;
+    }
 
-    private WordleDictionary dictionary;
+    public void run() {
+        // игровые ошибки обрабатываем здесь
+        targetWord = dictionary.getRandomWord();
+        logger.info("Загадали слово", targetWord);
 
+        menu.showGreeting();
+
+        while (steps < WordleConfig.GAME_MAX_STEPS) {
+            logger.info("Попытка №", steps.toString());
+
+            answer = menu.readUserAnswer();
+            logger.info("Слово пользователя: \"", answer, "\"");
+
+            // Если перевод строки, то предположить слово, иначе проверить слово
+
+            if (answer.isEmpty()) {
+                /* TODO
+                * Предположить слово
+                * Показать на экране
+                * Очистить "угадывалку" (?)
+                * */
+            } else if (checkAnswer(answer)) {
+               menu.showCongratulations(steps);
+               break;
+            } else {
+                /* TODO
+                * Определить вхождения букв и сохранить (?)
+                * Наполнить "угадывалку".
+                */
+                menu.showTryAgain(steps);
+            }
+        }
+
+
+    }
+
+    public boolean checkAnswer(String answer) {
+        // TODO Реализовать
+        // TODO "ё" конвертировать в "е"
+        return false;
+    }
 }
