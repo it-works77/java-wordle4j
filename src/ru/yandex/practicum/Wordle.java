@@ -1,13 +1,12 @@
 package ru.yandex.practicum;
 
 import ru.yandex.practicum.exception.LoggerException;
+import ru.yandex.practicum.model.SeverityLevel;
+import ru.yandex.practicum.model.WordleDictionary;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Objects;
-import java.util.logging.Logger;
 
 /*
 в главном классе нам нужно:
@@ -33,7 +32,7 @@ public class Wordle {
     public static void main(String[] args) {
         try {
             // создать лог-файл (он должен передаваться во все классы)
-            logger = new WordleLogger(LOG_FILENAME);
+            logger = new WordleLogger(SeverityLevel.INFO, LOG_FILENAME);
             logger.warning("Старт приложения...");
 
             // создать загрузчик словарей WordleDictionaryLoader

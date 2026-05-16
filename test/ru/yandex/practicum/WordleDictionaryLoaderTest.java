@@ -3,6 +3,7 @@ package ru.yandex.practicum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.exception.DictionaryIsEmptyException;
+import ru.yandex.practicum.model.WordleDictionary;
 
 import java.io.IOException;
 

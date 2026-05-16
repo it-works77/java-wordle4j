@@ -2,8 +2,7 @@ package ru.yandex.practicum;
 
 import ru.yandex.practicum.config.WordleConfig;
 import ru.yandex.practicum.controller.MenuController;
-
-import java.util.Scanner;
+import ru.yandex.practicum.model.WordleDictionary;
 
 /*
 в этом классе хранится словарь и состояние игры

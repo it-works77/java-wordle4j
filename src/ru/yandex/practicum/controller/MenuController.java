@@ -14,6 +14,7 @@ public class MenuController {
     }
 
     public String readUserAnswer() {
+        // TODO Проверять корректность ввода, выбрасывать игровые исключения, если неверно
         String answer = scanner.nextLine();
         return answer.trim();
     }

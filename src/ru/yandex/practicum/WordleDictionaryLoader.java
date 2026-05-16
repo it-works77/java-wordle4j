@@ -1,17 +1,14 @@
 package ru.yandex.practicum;
 
-import org.junit.platform.commons.util.StringUtils;
 import ru.yandex.practicum.config.WordleConfig;
 import ru.yandex.practicum.exception.DictionaryIsEmptyException;
+import ru.yandex.practicum.model.WordleDictionary;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.Dictionary;
-import java.util.logging.Logger;
 
 /*
 этот класс содержит в себе всю рутину по работе с файлами словарей и с кодировками
@@ -81,6 +78,7 @@ public class WordleDictionaryLoader {
     }
 
     private boolean isValidWord(String dictLine) {
+
         return dictLine.trim().length() == WordleConfig.GAME_WORD_LENGTH;
     }
 }
