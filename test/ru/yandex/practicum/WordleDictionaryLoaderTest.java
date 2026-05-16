@@ -44,7 +44,7 @@ class WordleDictionaryLoaderTest {
 
     @Test
     void normalizeNotRussianWordSuccess() throws IOException, DictionaryIsEmptyException {
-        WordleDictionaryLoader wdl = new WordleDictionaryLoader(".\\test\\resources\\check_for_russian_word.txt"
+        WordleDictionaryLoader wdl = new WordleDictionaryLoader(".\\test\\resources\\check_for_incorrect_chars.txt"
                 , new WordleLogger());
         WordleDictionary dict = wdl.getDictionary();
 

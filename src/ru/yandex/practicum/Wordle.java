@@ -32,7 +32,7 @@ public class Wordle {
     public static void main(String[] args) {
         try {
             // создать лог-файл (он должен передаваться во все классы)
-            logger = new WordleLogger(SeverityLevel.INFO, LOG_FILENAME);
+            logger = new WordleLogger(SeverityLevel.DEBUG, LOG_FILENAME);
             logger.warning("Старт приложения...");
 
             // создать загрузчик словарей WordleDictionaryLoader

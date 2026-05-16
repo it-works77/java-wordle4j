@@ -2,6 +2,9 @@ package ru.yandex.practicum;
 
 import ru.yandex.practicum.config.WordleConfig;
 import ru.yandex.practicum.exception.DictionaryIsEmptyException;
+import ru.yandex.practicum.exception.wordchecks.IncorrectWordLengthException;
+import ru.yandex.practicum.exception.wordchecks.WordCheckException;
+import ru.yandex.practicum.exception.wordchecks.WordContainsDeniedSymbolsException;
 import ru.yandex.practicum.model.WordleDictionary;
 
 import java.io.BufferedReader;
@@ -39,9 +42,13 @@ public class WordleDictionaryLoader {
                 lineCount++;
                 if (lineCount % WordleConfig.LOG_LINES_READ_SAMPLER == 0)
                     logger.info("Прочитано %d слов".formatted(lineCount));
-                if (isValidWord(dictLine)) {
+
+                try {
+                    validateWord(dictLine);
                     dict.addWord(normalizeWord(dictLine));
-                };
+                } catch (WordCheckException ex) {
+                    logger.debug(ex.getMessage(), ": ", dictLine);
+                }
             }
             logger.info("Всего прочитано %d слов".formatted(lineCount));
 
@@ -50,15 +57,15 @@ public class WordleDictionaryLoader {
             if (dict.getWordsCount() == 0) {
                 throw new DictionaryIsEmptyException("Пустой словарь");
             }
-        } catch (DictionaryIsEmptyException e) {
+        } catch (DictionaryIsEmptyException ex) {
             logger.error("Пустой словарь, слова не загружены:", filename);
-            throw e;
-        } catch (FileNotFoundException e) {
+            throw ex;
+        } catch (FileNotFoundException ex) {
             logger.error("Файл словаря не найден:", filename);
-            throw e;
-        } catch (IOException e) {
+            throw ex;
+        } catch (IOException ex) {
             logger.error("Ошибка чтения словаря из файла:", filename);
-            throw e;
+            throw ex;
         }
 
         return dict;
@@ -77,8 +84,31 @@ public class WordleDictionaryLoader {
         return result;
     }
 
-    private boolean isValidWord(String dictLine) {
+    private static void validateWord(String word) throws WordCheckException {
+        String wordToCheck = word.trim();
 
-        return dictLine.trim().length() == WordleConfig.GAME_WORD_LENGTH;
+        if (wordToCheck.length() != WordleConfig.GAME_WORD_LENGTH)
+            throw new IncorrectWordLengthException("Неверная длина слова");
+
+        // TODO implement check for spaces and hyphen in word!
+        if (wordToCheck.contains(" ")) {
+            throw new WordContainsDeniedSymbolsException("Слово содержит пробелы");
+        }
+
+        if (wordToCheck.contains("-")) {
+            throw new WordContainsDeniedSymbolsException("Слово содержит дефис");
+        }
+
+        if (wordToCheck.matches(".*[a-zA-Z].*")) {
+            throw new WordContainsDeniedSymbolsException("Слово содержит буквы английского алфавита");
+        }
+
+        if (wordToCheck.matches(".*[0-9].*")) {
+            throw new WordContainsDeniedSymbolsException("Слово содержит цифры");
+        }
+
+        if (!wordToCheck.matches("[а-яА-Я]+")) {
+            throw new WordContainsDeniedSymbolsException("Слово содержит символы, отличные от русского алфавита");
+        }
     }
 }
