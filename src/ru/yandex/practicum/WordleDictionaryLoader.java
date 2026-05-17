@@ -20,12 +20,12 @@ import java.nio.charset.Charset;
  */
 public class WordleDictionaryLoader {
     private final String filename;
-    private final Charset file_charset;
+    private final Charset fileCharset;
     private final WordleLogger logger;
 
     public WordleDictionaryLoader(String filename, WordleLogger logger) {
         this.filename = filename;
-        file_charset = WordleConfig.FILE_CHARSET;
+        fileCharset = WordleConfig.FILE_CHARSET;
         this.logger = logger;
     }
 
@@ -33,7 +33,7 @@ public class WordleDictionaryLoader {
         logger.debug("Enter getDictionary");
         WordleDictionary dict = new WordleDictionary(logger);
 
-        try (BufferedReader br = new BufferedReader(new FileReader(filename, file_charset))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(filename, fileCharset))) {
             String dictLine;
             int lineCount = 0;
 
