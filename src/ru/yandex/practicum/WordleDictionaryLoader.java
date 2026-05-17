@@ -30,7 +30,7 @@ public class WordleDictionaryLoader {
     }
 
     public WordleDictionary getDictionary() throws IOException, DictionaryIsEmptyException {
-        logger.debug("Enter getDictionary");
+        logger.info("Загружаем словарь из файла", filename);
         WordleDictionary dict = new WordleDictionary(logger);
 
         try (BufferedReader br = new BufferedReader(new FileReader(filename, fileCharset))) {
