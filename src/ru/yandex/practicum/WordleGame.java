@@ -88,6 +88,8 @@ public class WordleGame {
                     , result.getAbsentLetters()
             );
 
+            menu.showAnswer(result);
+
             if (result.isMatched()) {
                 logger.info("Пользователь угадал слово: ", result.getGuess());
                 isWin = true;
@@ -108,7 +110,6 @@ public class WordleGame {
 
     private String getClueWord() {
         // Просто берем из словаря подсказок.
-
         return wordsSuggests.getRandomWord();
     }
 
@@ -117,8 +118,10 @@ public class WordleGame {
         logger.info("Проверяем ответ:", answer);
 
         // Проверяем ответ
-        logger.debug("Проверяем ответ:", answer, ". Загаданное слово:", targetWord);
         AnswerCheckResult result = new AnswerCheckResult(answer, targetWord);
+        logger.debug("Проверяем ответ:", answer
+                , ". Совпадения:", result.toString()
+                , ". Загаданное слово:", targetWord);
         return  result;
     }
 }

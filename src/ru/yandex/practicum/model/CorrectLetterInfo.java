@@ -16,4 +16,12 @@ public class CorrectLetterInfo {
     public Integer getPosition() {
         return position;
     }
+
+    @Override
+    public String toString() {
+        return "Info{" +
+                "letter=" + letter +
+                ", pos=" + position +
+                '}';
+    }
 }

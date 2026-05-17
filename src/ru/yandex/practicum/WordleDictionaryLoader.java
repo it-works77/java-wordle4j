@@ -48,7 +48,7 @@ public class WordleDictionaryLoader {
                     validateWord(normalizeWord(nw));
                     dict.addWord(nw);
                 } catch (WordCheckException ex) {
-                    logger.debug(ex.getMessage(), ": ", dictLine);
+                    // logger.debug(ex.getMessage(), ": ", dictLine);
                 }
             }
             logger.info("Всего прочитано %d слов".formatted(lineCount));

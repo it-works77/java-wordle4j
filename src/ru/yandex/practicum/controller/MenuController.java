@@ -2,6 +2,7 @@ package ru.yandex.practicum.controller;
 
 import ru.yandex.practicum.WordleDictionaryLoader;
 import ru.yandex.practicum.exception.wordchecks.WordCheckException;
+import ru.yandex.practicum.model.AnswerCheckResult;
 
 import java.util.Scanner;
 
@@ -68,4 +69,7 @@ public class MenuController {
         System.out.println("Попытки кончились. Вы не угадали слово...");
     }
 
+    public void showAnswer(AnswerCheckResult result) {
+        System.out.println("\n" + result.getGuess() + "\n" + result);
+    }
 }

@@ -35,6 +35,15 @@ public class WordleDictionary {
 
     public String getRandomWord() {
         Random random = new Random();
+        // В словаре подсказок как минимум должно остаться правильное слово, он не должен быть пустым
+        if (words.isEmpty()) {
+            logger.critical("Словарь подсказок пуст...");
+        }
+        return words.get(random.nextInt(words.size()));
+    }
+
+    public String getRandomSuggest() {
+        Random random = new Random();
         return words.get(random.nextInt(words.size()));
     }
 
@@ -47,6 +56,11 @@ public class WordleDictionary {
             , HashSet<Character> absentLetters) {
 
         logger.info("Чистим словарь подсказок. Слов в словаре:", String.valueOf(words.size()));
+
+        // Если все буквы не угаданы, то словарь подсказок не изменится
+        if (correctLetters.isEmpty() && wrongPositionLetters.isEmpty()) {
+            return;
+        }
 
         List<String> newWords = new ArrayList<>();
         for (String word : words) {
@@ -68,6 +82,8 @@ public class WordleDictionary {
         }
         words = newWords;
         logger.info("Очистили словарь подсказок. Осталось слов:", String.valueOf(words.size()));
+        if (words.size() <= 20)
+            logger.debug("Остались подсказки:", words.toString());
     }
 
     private boolean hasAnyAbsentLetter(String word, HashSet<Character> letters) {
@@ -99,10 +115,11 @@ public class WordleDictionary {
 
     private boolean hasAllWrongPositionLetters(String word, HashSet<Character> letters) {
         for (Character ch : letters) {
-            if (word.indexOf(ch) != -1) {
+            if (word.indexOf(ch) == -1) {
                 // Нет хотя бы одной буквы на любой позиции - слово не подходит
                 logger.debug("Исключаем слово ", word
-                        , ". Нет буквы: ", String.valueOf(ch));
+                        , ". Нет буквы на 'неверной' позиции: ", String.valueOf(ch)
+                        , ". Набор букв:", letters.toString());
                 return false;
             }
         }
