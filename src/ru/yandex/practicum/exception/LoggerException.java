@@ -1,7 +1,9 @@
 package ru.yandex.practicum.exception;
 
 public class LoggerException extends Exception {
-    public  LoggerException() {}
+    public  LoggerException() {
+
+    }
 
     public LoggerException(String message) {
         super(message);
