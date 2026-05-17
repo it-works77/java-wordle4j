@@ -31,7 +31,7 @@ public class WordleDictionaryLoader {
 
     public WordleDictionary getDictionary() throws IOException, DictionaryIsEmptyException {
         logger.debug("Enter getDictionary");
-        WordleDictionary dict = new WordleDictionary();
+        WordleDictionary dict = new WordleDictionary(logger);
 
         try (BufferedReader br = new BufferedReader(new FileReader(filename, file_charset))) {
             String dictLine = "";
@@ -72,25 +72,17 @@ public class WordleDictionaryLoader {
 
     }
 
-    private String normalizeWord(String dictLine) {
-        String result;
-
-        result = dictLine.trim().toLowerCase()
+    public static String normalizeWord(String dictLine) {
+        return dictLine.trim().toLowerCase()
                 .replace("ё", "е");
-
-        // TODO implement check for Russian alphabet!
-        // TODO implement check for spaces and hyphen in word!
-
-        return result;
     }
 
-    private static void validateWord(String word) throws WordCheckException {
+    public static void validateWord(String word) throws WordCheckException {
         String wordToCheck = word.trim();
 
         if (wordToCheck.length() != WordleConfig.GAME_WORD_LENGTH)
             throw new IncorrectWordLengthException("Неверная длина слова");
 
-        // TODO implement check for spaces and hyphen in word!
         if (wordToCheck.contains(" ")) {
             throw new WordContainsDeniedSymbolsException("Слово содержит пробелы");
         }
@@ -107,7 +99,7 @@ public class WordleDictionaryLoader {
             throw new WordContainsDeniedSymbolsException("Слово содержит цифры");
         }
 
-        if (!wordToCheck.matches("[а-яА-Я]+")) {
+        if (!wordToCheck.matches("[а-яА-ЯёЁ]+")) {
             throw new WordContainsDeniedSymbolsException("Слово содержит символы, отличные от русского алфавита");
         }
     }

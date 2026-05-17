@@ -1,5 +1,6 @@
 package ru.yandex.practicum;
 
+import org.junit.platform.commons.util.ExceptionUtils;
 import ru.yandex.practicum.exception.LoggerException;
 import ru.yandex.practicum.model.SeverityLevel;
 import ru.yandex.practicum.model.WordleDictionary;
@@ -56,11 +57,13 @@ public class Wordle {
 
             logger.warning("Завершение приложения...");
 
-        } catch (LoggerException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            logger.critical("Фатальная ошибка, завершаем работу:", e.getMessage());
+        } catch (LoggerException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace();
+        } catch (Exception ex) {
+            logger.critical("Фатальная ошибка, завершаем работу:"
+                    , ex.getMessage(), "\n"
+                    , ExceptionUtils.readStackTrace(ex));
 
         } finally {
             if (Objects.nonNull(logger)) {

@@ -1,8 +1,8 @@
 package ru.yandex.practicum.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import ru.yandex.practicum.WordleLogger;
+
+import java.util.*;
 
 /*
 этот класс содержит в себе список слов List<String>
@@ -11,10 +11,18 @@ import java.util.Random;
  */
 public class WordleDictionary {
 
-    private final List<String> words;
+    private List<String> words;
+    private final WordleLogger logger;
 
-    public WordleDictionary() {
+    public WordleDictionary(WordleLogger logger) {
+        this.logger = logger;
         words = new ArrayList<>();
+    }
+
+    public WordleDictionary(WordleDictionary wd, WordleLogger logger) {
+        this.logger = logger;
+        words = new ArrayList<>();
+        words.addAll(wd.words);
     }
 
     public void addWord(String s) {
@@ -32,5 +40,68 @@ public class WordleDictionary {
 
     public int getWordsCount() {
         return words.size();
+    }
+
+    public void removeNotMatchingWords(ArrayList<CorrectLetterInfo> correctLetters
+            , HashSet<Character> wrongPositionLetters
+            , HashSet<Character> absentLetters) {
+
+        List<String> newWords = new ArrayList<>();
+        for (String word : words) {
+            if (hasAnyAbsentLetter(word, absentLetters)) {
+                // Если есть хоть одна отсутствующая буква, исключаем слово
+                logger.debug("Исключаем из подсказок слово", word
+                        , ". В нем есть буквы, которых не должно быть:", absentLetters.toString());
+                continue;
+            }
+
+            if (hasAllCorrectLetters(word, correctLetters) && hasAllWrongPositionLetters(word, wrongPositionLetters)) {
+                logger.debug("В слове", word, "есть все необходимые буквы."
+                        , "Угаданные:", correctLetters.toString()
+                        , ". Не на своих местах: ", wrongPositionLetters.toString());
+                newWords.add(word);
+            }
+
+        }
+        words = newWords;
+    }
+
+    private boolean hasAnyAbsentLetter(String word, HashSet<Character> letters) {
+        // TODO Если придет пустой?
+        // Если есть хоть одна отсутствующая буква, исключаем слово
+        for (Character ch : letters) {
+            if (word.indexOf(ch) != -1) {
+                logger.debug("Исключаем слово ", word, "Присутствует буква: ", String.valueOf(ch));
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean hasAllCorrectLetters(String word, ArrayList<CorrectLetterInfo> letters) {
+        for (CorrectLetterInfo letter : letters) {
+            int index = word.indexOf(letter.getLetter());
+            if (index != letter.getPosition()) {
+                // При первом несовпадении буквы на нужной позиции - слово не подходит
+                logger.debug("Исключаем слово ", word
+                        , "Нет буквы: ", String.valueOf(letter.getLetter())
+                        , "на позиции", String.valueOf(letter.getPosition())
+                );
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean hasAllWrongPositionLetters(String word, HashSet<Character> letters) {
+        for (Character ch : letters) {
+            if (word.indexOf(ch) != -1) {
+                // Нет хотя бы одной буквы на любой позиции - слово не подходит
+                logger.debug("Исключаем слово ", word
+                        , ". Нет буквы: ", String.valueOf(ch));
+                return false;
+            }
+        }
+        return true;
     }
 }

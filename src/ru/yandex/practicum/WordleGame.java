@@ -2,6 +2,8 @@ package ru.yandex.practicum;
 
 import ru.yandex.practicum.config.WordleConfig;
 import ru.yandex.practicum.controller.MenuController;
+import ru.yandex.practicum.exception.wordchecks.WordCheckException;
+import ru.yandex.practicum.model.AnswerCheckResult;
 import ru.yandex.practicum.model.WordleDictionary;
 
 /*
@@ -19,58 +21,107 @@ import ru.yandex.practicum.model.WordleDictionary;
 public class WordleGame {
 
     private final WordleLogger logger;
-    private MenuController menu;
+    private final MenuController menu;
 
     private String answer;
     private String targetWord;
-    private Integer steps;
+    private Integer currentStep;
+    private Integer stepsLeft;
     private final WordleDictionary dictionary;
+    private final WordleDictionary wordsSuggests;
 
     public WordleGame(WordleDictionary wd, WordleLogger logger) {
         dictionary = wd;
-        steps = 0;
+        wordsSuggests = new WordleDictionary(wd, logger);
+        currentStep = 0;
+        stepsLeft = WordleConfig.GAME_MAX_STEPS;
         this.logger = logger;
+        menu = new MenuController();
     }
 
     public void run() {
-        // игровые ошибки обрабатываем здесь
+
         targetWord = dictionary.getRandomWord();
         logger.info("Загадали слово", targetWord);
 
         menu.showGreeting();
 
-        while (steps < WordleConfig.GAME_MAX_STEPS) {
-            logger.info("Попытка №", steps.toString());
+        boolean isWin = false;
+        while (stepsLeft > 0) {
+            currentStep++;
+            logger.info("Попытка №", currentStep.toString());
+            menu.showCurrentStepNumber(currentStep);
 
-            answer = menu.readUserAnswer();
+            boolean isIncorrectInput;
+            do {
+                // игровые ошибки обрабатываем здесь
+                try {
+                    isIncorrectInput = false;
+                    answer = menu.readUserAnswer();
+                } catch (WordCheckException ex) {
+                    logger.warning(ex.getMessage());
+                    menu.showIncorrectWordWarning(ex.getMessage());
+
+                    isIncorrectInput = true;
+                }
+            } while (isIncorrectInput);
+
+            // Корректный ввод или запрос подсказки тратит одну попытку
+            stepsLeft--;
             logger.info("Слово пользователя: \"", answer, "\"");
 
             // Если перевод строки, то предположить слово, иначе проверить слово
-
             if (answer.isEmpty()) {
-                /* TODO
-                * Предположить слово
-                * Показать на экране
-                * Очистить "угадывалку" (?)
-                * */
-            } else if (checkAnswer(answer)) {
-               menu.showCongratulations(steps);
-               break;
+                // Получить и показать на экране подсказку
+                logger.info("Пользователь запросил подсказку");
+                answer = getClueWord();
+                menu.showСlue(answer);
+            }
+
+            AnswerCheckResult result = checkAnswer(answer);
+
+            if (result.isMatched()) {
+                logger.info("Пользователь угадал слово: ", result.getGuess());
+                isWin = true;
+                break;
             } else {
                 /* TODO
                 * Определить вхождения букв и сохранить (?)
                 * Наполнить "угадывалку".
                 */
-                menu.showTryAgain(steps);
+                menu.showTryAgain(stepsLeft);
             }
         }
 
+        if (isWin) {
+            menu.showEndGameWin(currentStep);
+        } else {
+            menu.showEndGameLose();
+        }
 
     }
 
-    public boolean checkAnswer(String answer) {
-        // TODO Реализовать
-        // TODO "ё" конвертировать в "е"
-        return false;
+    private String getClueWord() {
+        // TODO Просто берем из словаря подсказок?
+
+        return "аббат";
+    }
+
+    private AnswerCheckResult checkAnswer(String answer) {
+        // TODO Implement this
+        logger.info("Проверяем ответ:", answer);
+
+        // Проверяем ответ
+        logger.debug("Проверяем ответ:", answer, ". Загаданное слово:", targetWord);
+        AnswerCheckResult result = new AnswerCheckResult(answer, targetWord);
+
+        // Появились новые данные по буквам
+        // Чистим wordsSuggests по новым данным (будет использоваться в getClueWord
+        dictionary.removeNotMatchingWords(result.getCorrectLetters()
+                , result.getWrongPositionLetters()
+                , result.getAbsentLetters()
+        );
+
+        return  result;
     }
 }
