@@ -46,12 +46,15 @@ public class WordleDictionary {
             , HashSet<Character> wrongPositionLetters
             , HashSet<Character> absentLetters) {
 
+        logger.info("Чистим словарь подсказок. Слов в словаре:", String.valueOf(words.size()));
+
         List<String> newWords = new ArrayList<>();
         for (String word : words) {
             if (hasAnyAbsentLetter(word, absentLetters)) {
                 // Если есть хоть одна отсутствующая буква, исключаем слово
                 logger.debug("Исключаем из подсказок слово", word
-                        , ". В нем есть буквы, которых не должно быть:", absentLetters.toString());
+                        , ". В нем есть буквы, которых не должно быть " +
+                                "(одна или несколько из):", absentLetters.toString());
                 continue;
             }
 
@@ -64,6 +67,7 @@ public class WordleDictionary {
 
         }
         words = newWords;
+        logger.info("Очистили словарь подсказок. Осталось слов:", String.valueOf(words.size()));
     }
 
     private boolean hasAnyAbsentLetter(String word, HashSet<Character> letters) {

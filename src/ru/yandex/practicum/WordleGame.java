@@ -42,6 +42,7 @@ public class WordleGame {
     public void run() {
 
         targetWord = dictionary.getRandomWord();
+        // TODO Загаданное слово надо убрать из словаря подсказок!
         logger.info("Загадали слово", targetWord);
 
         menu.showGreeting();
@@ -80,15 +81,19 @@ public class WordleGame {
 
             AnswerCheckResult result = checkAnswer(answer);
 
+            // Чистим wordsSuggests по новым данным от неподходящих слов
+            // (будет использоваться в getClueWord на следующем шаге)
+            wordsSuggests.removeNotMatchingWords(result.getCorrectLetters()
+                    , result.getWrongPositionLetters()
+                    , result.getAbsentLetters()
+            );
+
             if (result.isMatched()) {
                 logger.info("Пользователь угадал слово: ", result.getGuess());
                 isWin = true;
                 break;
             } else {
-                /* TODO
-                * Определить вхождения букв и сохранить (?)
-                * Наполнить "угадывалку".
-                */
+                logger.info("Пользователь ошибся: ", result.getGuess());
                 menu.showTryAgain(stepsLeft);
             }
         }
@@ -102,9 +107,9 @@ public class WordleGame {
     }
 
     private String getClueWord() {
-        // TODO Просто берем из словаря подсказок?
+        // Просто берем из словаря подсказок.
 
-        return "аббат";
+        return wordsSuggests.getRandomWord();
     }
 
     private AnswerCheckResult checkAnswer(String answer) {
@@ -114,14 +119,6 @@ public class WordleGame {
         // Проверяем ответ
         logger.debug("Проверяем ответ:", answer, ". Загаданное слово:", targetWord);
         AnswerCheckResult result = new AnswerCheckResult(answer, targetWord);
-
-        // Появились новые данные по буквам
-        // Чистим wordsSuggests по новым данным (будет использоваться в getClueWord
-        dictionary.removeNotMatchingWords(result.getCorrectLetters()
-                , result.getWrongPositionLetters()
-                , result.getAbsentLetters()
-        );
-
         return  result;
     }
 }

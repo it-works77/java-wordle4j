@@ -44,8 +44,9 @@ public class WordleDictionaryLoader {
                     logger.info("Прочитано %d слов".formatted(lineCount));
 
                 try {
-                    validateWord(dictLine);
-                    dict.addWord(normalizeWord(dictLine));
+                    String nw = normalizeWord(dictLine);
+                    validateWord(normalizeWord(nw));
+                    dict.addWord(nw);
                 } catch (WordCheckException ex) {
                     logger.debug(ex.getMessage(), ": ", dictLine);
                 }
