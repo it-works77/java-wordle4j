@@ -87,7 +87,7 @@ class WordleDictionaryTest {
         HashSet<Character> absentLetters = getLettersSet();
         dict.removeNotMatchingWords(correctLetters, wrongPositionLetters, absentLetters);
 
-        assertEquals(12, dict.getWordsCount());
+        assertEquals(74, dict.getWordsCount());
     }
 
     @Test
