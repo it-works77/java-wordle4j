@@ -89,9 +89,9 @@ public class WordleGame {
 
             // Чистим wordsSuggests по новым данным от неподходящих слов
             // (будет использоваться в getClueWord на следующем шаге)
-            wordsSuggests.removeNotMatchingWords(result.getCorrectLetters()
-                    , result.getWrongPositionLetters()
-                    , result.getAbsentLetters()
+            wordsSuggests.removeNotMatchingWords(result.getCorrectLetters(),
+                    result.getWrongPositionLetters(),
+                    result.getAbsentLetters()
             );
 
             menu.showAnswer(result);
@@ -123,8 +123,8 @@ public class WordleGame {
 
         // Проверяем ответ
         AnswerCheckResult result = new AnswerCheckResult(answer, targetWord);
-        logger.debug("Совпадения:", result.toString()
-                , "| Загаданное слово:", targetWord);
+        logger.debug("Совпадения:", result.toString(),
+                "| Загаданное слово:", targetWord);
         return  result;
     }
 

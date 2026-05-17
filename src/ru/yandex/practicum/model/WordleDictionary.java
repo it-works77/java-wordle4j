@@ -51,9 +51,9 @@ public class WordleDictionary {
         return words.size();
     }
 
-    public void removeNotMatchingWords(ArrayList<CorrectLetterInfo> correctLetters
-            , HashSet<Character> wrongPositionLetters
-            , HashSet<Character> absentLetters) {
+    public void removeNotMatchingWords(ArrayList<CorrectLetterInfo> correctLetters,
+            HashSet<Character> wrongPositionLetters,
+            HashSet<Character> absentLetters) {
 
         logger.info("Чистим словарь подсказок. Слов в словаре:", String.valueOf(words.size()));
 
@@ -66,16 +66,16 @@ public class WordleDictionary {
         for (String word : words) {
             if (hasAnyAbsentLetter(word, absentLetters)) {
                 // Если есть хоть одна отсутствующая буква, исключаем слово
-                logger.debug("Исключаем из подсказок слово", word
-                        , "| В нем есть буквы, которых не должно быть " +
-                                "(одна или несколько из):", absentLetters.toString());
+                logger.debug("Исключаем из подсказок слово", word,
+                        "| В нем есть буквы, которых не должно быть (одна или несколько из):",
+                        absentLetters.toString());
                 continue;
             }
 
             if (hasAllCorrectLetters(word, correctLetters) && hasAllWrongPositionLetters(word, wrongPositionLetters)) {
-                logger.debug("В слове", word, "есть все необходимые буквы."
-                        , "Угаданные:", correctLetters.toString()
-                        , "| Не на своих местах: ", wrongPositionLetters.toString());
+                logger.debug("В слове", word, "есть все необходимые буквы.",
+                        "Угаданные:", correctLetters.toString(),
+                        "| Не на своих местах: ", wrongPositionLetters.toString());
                 newWords.add(word);
             }
 
@@ -118,11 +118,11 @@ public class WordleDictionary {
 
             if (!isIndexMatched) {
                 // При первом же несовпадении буквы на нужной позиции (не нашли позицию буквы) - слово не подходит
-                logger.debug("Исключаем слово", word
-                            , "| Нет буквы:", String.valueOf(letter.getLetter())
-                            , "на позиции", String.valueOf(letter.getPosition())
-                            ,"Точные совпадения букв:", letters.toString()
-                    );
+                logger.debug("Исключаем слово", word,
+                        "| Нет буквы:", String.valueOf(letter.getLetter()),
+                        "на позиции", String.valueOf(letter.getPosition()),
+                        "Точные совпадения букв:", letters.toString()
+                );
                 return false;
             }
         }
@@ -133,9 +133,9 @@ public class WordleDictionary {
         for (Character ch : letters) {
             if (word.indexOf(ch) == -1) {
                 // Нет хотя бы одной буквы на любой позиции - слово не подходит
-                logger.debug("Исключаем слово", word
-                        , "| Нет буквы на 'неверной' позиции:", String.valueOf(ch)
-                        , "| Набор букв:", letters.toString());
+                logger.debug("Исключаем слово", word,
+                        "| Нет буквы на 'неверной' позиции:", String.valueOf(ch),
+                        "| Набор букв:", letters.toString());
                 return false;
             }
         }
