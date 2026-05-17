@@ -15,6 +15,7 @@ public class MenuController {
 
 
     public String readUserAnswer() throws WordCheckException {
+
         System.out.println("Введите слово или нажмите Enter для получения подсказки:");
         String answer = scanner.nextLine();
 
@@ -30,11 +31,12 @@ public class MenuController {
 
     public void showGreeting() {
         System.out.println("Добро пожаловать в игру Wordle!\n");
-        System.out.println("Компьютер «загадывает» слово: " +
-                "существительное в единственном числе в именительном падеже.\n" +
-                "Используется словарь русских слов, состоящих из пяти букв.\n" +
-                "Используются только буквы (нет пробелов и дефисов).\n" +
-                "Игроку доступно шесть попыток.\n");
+        System.out.println("""
+                Компьютер «загадывает» слово: существительное в единственном числе в именительном падеже.
+                Используется словарь русских слов, состоящих из пяти букв.
+                Используются только буквы (нет пробелов и дефисов).
+                Игроку доступно шесть попыток.
+                """);
     }
 
     public void showCurrentStepNumber(Integer currentStep) {
@@ -45,31 +47,41 @@ public class MenuController {
         System.out.println(message + ".");
     }
 
-    public void showTryAgain(int stepsLeft)  {
+    public void showTryAgain(int stepsLeft) {
         System.out.println("Вы не угадали...");
-        String stepsLeftWord = "попыток";
-        if (stepsLeft == 1) {
-            stepsLeftWord = "попытка";
-        } else if (stepsLeft > 1 && stepsLeft < 5) {
-            stepsLeftWord = "попытки";
-
+        String stepsLeftWord = getStepWordInRussian(stepsLeft);
+        if (stepsLeft > 0) {
+            System.out.printf("Осталось %d %s%n", stepsLeft, stepsLeftWord);
+            System.out.println("Попробуйте еще раз или получите подсказку...");
         }
-        System.out.printf("Осталось %d %s%n", stepsLeft, stepsLeftWord);
-        System.out.println("Попробуйте еще раз или получите подсказку...");
     }
 
-    public void showСlue(String clue) {
+    public void showClue(String clue) {
         System.out.println("Компьютер выбрал подсказку: " + clue);
+    }
 
-    }
     public void showEndGameWin(int currentStep) {
-        System.out.printf("Вы угадали слово за %d попыток!%n", currentStep);
+        String currentStepWord = getStepWordInRussian(currentStep);
+        System.out.printf("Вы угадали слово за %d %s!%n", currentStep, currentStepWord);
     }
-    public void showEndGameLose() {
-        System.out.println("Попытки кончились. Вы не угадали слово...");
+
+    private static String getStepWordInRussian(int stepNumber) {
+        String stepNumberWord = "попыток";
+        if (stepNumber == 1) {
+            stepNumberWord = "попытка";
+        } else if (stepNumber > 1 && stepNumber < 5) {
+            stepNumberWord = "попытки";
+        }
+        return stepNumberWord;
+    }
+
+    public void showEndGameLose(String targetWord) {
+        System.out.println("Попытки кончились. Вы не угадали слово " + targetWord);
     }
 
     public void showAnswer(AnswerCheckResult result) {
-        System.out.println("\n" + result.getGuess() + "\n" + result);
+        System.out.println("\nУгаданные буквы");
+        System.out.println(result.getGuess());
+        System.out.println(result);
     }
 }

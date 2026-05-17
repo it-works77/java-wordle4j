@@ -50,7 +50,6 @@ public class AnswerCheckResult {
         if (guess.equals(correctWord)) {
             isMatched = true;
             for (int i = 0; i < WordleConfig.GAME_WORD_LENGTH; i++) {
-                // TODO можно как-то инициировать по-другому?
                 charStatuses.add(CharStatus.CORRECT);
                 correctLetters.add(new CorrectLetterInfo(guess.charAt(i), i));
             }
@@ -88,7 +87,6 @@ public class AnswerCheckResult {
             } else if (s == CharStatus.ABSENT) {
                 sb.append("-");
             } else {
-                // TODO Надо ли так?
                 throw new RuntimeException("Неверный статус");
             }
         }

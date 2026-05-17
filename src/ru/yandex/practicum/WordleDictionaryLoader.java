@@ -34,7 +34,7 @@ public class WordleDictionaryLoader {
         WordleDictionary dict = new WordleDictionary(logger);
 
         try (BufferedReader br = new BufferedReader(new FileReader(filename, file_charset))) {
-            String dictLine = "";
+            String dictLine;
             int lineCount = 0;
 
             while (br.ready()) {

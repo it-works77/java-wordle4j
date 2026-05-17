@@ -52,7 +52,6 @@ public class WordleLogger {
         }
     }
 
-    // Todo with stacktrace
     public void debug(String... messages) {
         if (logLevel.isLoggable(SeverityLevel.DEBUG)) {
             log(new StringBuilder(SeverityLevel.DEBUG.getName()).append(": "), messages);

@@ -67,7 +67,7 @@ public class WordleDictionary {
             if (hasAnyAbsentLetter(word, absentLetters)) {
                 // Если есть хоть одна отсутствующая буква, исключаем слово
                 logger.debug("Исключаем из подсказок слово", word
-                        , ". В нем есть буквы, которых не должно быть " +
+                        , "| В нем есть буквы, которых не должно быть " +
                                 "(одна или несколько из):", absentLetters.toString());
                 continue;
             }
@@ -75,23 +75,22 @@ public class WordleDictionary {
             if (hasAllCorrectLetters(word, correctLetters) && hasAllWrongPositionLetters(word, wrongPositionLetters)) {
                 logger.debug("В слове", word, "есть все необходимые буквы."
                         , "Угаданные:", correctLetters.toString()
-                        , ". Не на своих местах: ", wrongPositionLetters.toString());
+                        , "| Не на своих местах: ", wrongPositionLetters.toString());
                 newWords.add(word);
             }
 
         }
         words = newWords;
         logger.info("Очистили словарь подсказок. Осталось слов:", String.valueOf(words.size()));
-        if (words.size() <= 20)
+        if (words.size() <= 50)
             logger.debug("Остались подсказки:", words.toString());
     }
 
     private boolean hasAnyAbsentLetter(String word, HashSet<Character> letters) {
-        // TODO Если придет пустой?
         // Если есть хоть одна отсутствующая буква, исключаем слово
         for (Character ch : letters) {
             if (word.indexOf(ch) != -1) {
-                logger.debug("Исключаем слово ", word, "Присутствует буква: ", String.valueOf(ch));
+                logger.debug("Исключаем слово ", word, "| Присутствует буква: ", String.valueOf(ch));
                 return true;
             }
         }
@@ -100,13 +99,30 @@ public class WordleDictionary {
 
     private boolean hasAllCorrectLetters(String word, ArrayList<CorrectLetterInfo> letters) {
         for (CorrectLetterInfo letter : letters) {
+            // Вхождений буквы может быть несколько, соберем все вхождения
+            List<Integer> indexes = new ArrayList<>();
             int index = word.indexOf(letter.getLetter());
-            if (index != letter.getPosition()) {
-                // При первом несовпадении буквы на нужной позиции - слово не подходит
-                logger.debug("Исключаем слово ", word
-                        , "Нет буквы: ", String.valueOf(letter.getLetter())
-                        , "на позиции", String.valueOf(letter.getPosition())
-                );
+
+            while (index != -1) {
+                indexes.add(index);
+                index = word.indexOf(letter.getLetter(), index + 1);
+            }
+
+            boolean isIndexMatched = false;
+            for (Integer i : indexes) {
+                if (i.equals(letter.getPosition())) {
+                    isIndexMatched = true;
+                    break;
+                }
+            }
+
+            if (!isIndexMatched) {
+                // При первом же несовпадении буквы на нужной позиции (не нашли позицию буквы) - слово не подходит
+                logger.debug("Исключаем слово", word
+                            , "| Нет буквы:", String.valueOf(letter.getLetter())
+                            , "на позиции", String.valueOf(letter.getPosition())
+                            ,"Точные совпадения букв:", letters.toString()
+                    );
                 return false;
             }
         }
@@ -117,9 +133,9 @@ public class WordleDictionary {
         for (Character ch : letters) {
             if (word.indexOf(ch) == -1) {
                 // Нет хотя бы одной буквы на любой позиции - слово не подходит
-                logger.debug("Исключаем слово ", word
-                        , ". Нет буквы на 'неверной' позиции: ", String.valueOf(ch)
-                        , ". Набор букв:", letters.toString());
+                logger.debug("Исключаем слово", word
+                        , "| Нет буквы на 'неверной' позиции:", String.valueOf(ch)
+                        , "| Набор букв:", letters.toString());
                 return false;
             }
         }

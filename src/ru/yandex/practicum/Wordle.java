@@ -1,12 +1,10 @@
 package ru.yandex.practicum;
 
 import org.junit.platform.commons.util.ExceptionUtils;
+import ru.yandex.practicum.config.WordleConfig;
 import ru.yandex.practicum.exception.LoggerException;
-import ru.yandex.practicum.model.SeverityLevel;
 import ru.yandex.practicum.model.WordleDictionary;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /*
@@ -19,11 +17,6 @@ import java.util.Objects;
     вывести состояние игры и конечный результат
  */
 public class Wordle {
-    public static final String LOG_FILENAME = "wordle4j.log";
-    public static final String LOG_LEVEL = "WARNING";
-    private static final String DICTIONARY_FILENAME = "words_ru.txt";
-    public static final Charset DICTIONARY_CHARSET = StandardCharsets.UTF_8;
-
     public static WordleDictionaryLoader wdl;
     public static WordleDictionary wd;
     public static WordleGame game;
@@ -33,15 +26,15 @@ public class Wordle {
     public static void main(String[] args) {
         try {
             // создать лог-файл (он должен передаваться во все классы)
-            logger = new WordleLogger(SeverityLevel.DEBUG, LOG_FILENAME);
+            logger = new WordleLogger(WordleConfig.LOG_LEVEL, WordleConfig.LOG_FILENAME);
             logger.warning("Старт приложения...");
 
             // создать загрузчик словарей WordleDictionaryLoader
             logger.info("Создаем загрузчик словарей");
-            wdl = new WordleDictionaryLoader(DICTIONARY_FILENAME, logger);
+            wdl = new WordleDictionaryLoader(WordleConfig.DICTIONARY_FILENAME, logger);
 
             // загрузить словарь WordleDictionary с помощью класса WordleDictionaryLoader
-            logger.info("Загружаем словарь из файла %s".formatted(DICTIONARY_FILENAME));
+            logger.info("Загружаем словарь из файла %s".formatted(WordleConfig.DICTIONARY_FILENAME));
             wd = wdl.getDictionary();
 
             // затем создать игру WordleGame и передать ей словарь
@@ -54,6 +47,11 @@ public class Wordle {
 
             // вывести состояние игры и конечный результат
             logger.info("Выводим результаты");
+            if (game.isWin()) {
+                logger.info("Пользователь выиграл");
+            } else {
+                logger.info("Пользователь проиграл");
+            }
 
             logger.warning("Завершение приложения...");
 
@@ -64,6 +62,7 @@ public class Wordle {
             logger.critical("Фатальная ошибка, завершаем работу:"
                     , ex.getMessage(), "\n"
                     , ExceptionUtils.readStackTrace(ex));
+            System.out.println("Игра сломалась, извините...");
 
         } finally {
             if (Objects.nonNull(logger)) {

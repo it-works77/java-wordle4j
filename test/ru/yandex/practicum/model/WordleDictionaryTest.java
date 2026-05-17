@@ -78,6 +78,19 @@ class WordleDictionaryTest {
     }
 
     @Test
+    void MoreThanOneEqualCorrectLetter() {
+        ArrayList<CorrectLetterInfo> correctLetters = new ArrayList<>();
+        correctLetters.add(new CorrectLetterInfo('е', 1));
+        correctLetters.add(new CorrectLetterInfo('е', 3));
+
+        HashSet<Character> wrongPositionLetters = getLettersSet();
+        HashSet<Character> absentLetters = getLettersSet();
+        dict.removeNotMatchingWords(correctLetters, wrongPositionLetters, absentLetters);
+
+        assertEquals(12, dict.getWordsCount());
+    }
+
+    @Test
     void OnlyWrongPositionLetters() {
         ArrayList<CorrectLetterInfo> correctLetters = new ArrayList<>();
         HashSet<Character> wrongPositionLetters = getLettersSet('а', 'е');

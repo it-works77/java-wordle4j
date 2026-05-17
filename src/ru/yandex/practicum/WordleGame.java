@@ -23,12 +23,15 @@ public class WordleGame {
     private final WordleLogger logger;
     private final MenuController menu;
 
+    private final WordleDictionary dictionary; // Слова для угадывания
+    private final WordleDictionary wordsSuggests; // Словарь подсказок, очищается по мере угадывания букв
+
+    private boolean isWin = false; // Результат игры
+
     private String answer;
     private String targetWord;
     private Integer currentStep;
     private Integer stepsLeft;
-    private final WordleDictionary dictionary;
-    private final WordleDictionary wordsSuggests;
 
     public WordleGame(WordleDictionary wd, WordleLogger logger) {
         dictionary = wd;
@@ -41,13 +44,15 @@ public class WordleGame {
 
     public void run() {
 
-        targetWord = dictionary.getRandomWord();
-        // TODO Загаданное слово надо убрать из словаря подсказок!
+        if (WordleConfig.FIXED_TARGET_WORD.isEmpty()) {
+            targetWord = dictionary.getRandomWord();
+        } else {
+            targetWord = WordleConfig.FIXED_TARGET_WORD;
+        }
         logger.info("Загадали слово", targetWord);
 
         menu.showGreeting();
 
-        boolean isWin = false;
         while (stepsLeft > 0) {
             currentStep++;
             logger.info("Попытка №", currentStep.toString());
@@ -69,14 +74,15 @@ public class WordleGame {
 
             // Корректный ввод или запрос подсказки тратит одну попытку
             stepsLeft--;
-            logger.info("Слово пользователя: \"", answer, "\"");
 
             // Если перевод строки, то предположить слово, иначе проверить слово
             if (answer.isEmpty()) {
                 // Получить и показать на экране подсказку
                 logger.info("Пользователь запросил подсказку");
                 answer = getClueWord();
-                menu.showСlue(answer);
+                menu.showClue(answer);
+            } else {
+                logger.info("Слово пользователя: \"", answer, "\"");
             }
 
             AnswerCheckResult result = checkAnswer(answer);
@@ -91,11 +97,11 @@ public class WordleGame {
             menu.showAnswer(result);
 
             if (result.isMatched()) {
-                logger.info("Пользователь угадал слово: ", result.getGuess());
+                logger.info("Пользователь угадал слово:", result.getGuess());
                 isWin = true;
                 break;
             } else {
-                logger.info("Пользователь ошибся: ", result.getGuess());
+                logger.info("Пользователь ошибся:", result.getGuess());
                 menu.showTryAgain(stepsLeft);
             }
         }
@@ -103,25 +109,26 @@ public class WordleGame {
         if (isWin) {
             menu.showEndGameWin(currentStep);
         } else {
-            menu.showEndGameLose();
+            menu.showEndGameLose(targetWord);
         }
 
     }
 
     private String getClueWord() {
-        // Просто берем из словаря подсказок.
         return wordsSuggests.getRandomWord();
     }
 
     private AnswerCheckResult checkAnswer(String answer) {
-        // TODO Implement this
         logger.info("Проверяем ответ:", answer);
 
         // Проверяем ответ
         AnswerCheckResult result = new AnswerCheckResult(answer, targetWord);
-        logger.debug("Проверяем ответ:", answer
-                , ". Совпадения:", result.toString()
-                , ". Загаданное слово:", targetWord);
+        logger.debug("Совпадения:", result.toString()
+                , "| Загаданное слово:", targetWord);
         return  result;
+    }
+
+    public boolean isWin() {
+        return isWin;
     }
 }
