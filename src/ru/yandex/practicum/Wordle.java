@@ -59,9 +59,9 @@ public class Wordle {
             System.out.println(ex.getMessage());
             ex.printStackTrace();
         } catch (Exception ex) {
-            logger.critical("Фатальная ошибка, завершаем работу:"
-                    , ex.getMessage(), "\n"
-                    , ExceptionUtils.readStackTrace(ex));
+            logger.critical("Фатальная ошибка, завершаем работу:",
+                    ex.getMessage(), "\n",
+                    ExceptionUtils.readStackTrace(ex));
             System.out.println("Игра сломалась, извините...");
 
         } finally {
