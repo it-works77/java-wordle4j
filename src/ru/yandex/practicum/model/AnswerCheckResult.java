@@ -3,7 +3,9 @@ package ru.yandex.practicum.model;
 import ru.yandex.practicum.config.WordleConfig;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 
 public class AnswerCheckResult {
     private final String guess;
@@ -59,18 +61,50 @@ public class AnswerCheckResult {
                 throw new IllegalArgumentException("Длина загаданного слова и попытки пользователя не совпадают");
             }
 
-            for (int i = 0; i < guess.length(); i++) {
-                if (guess.charAt(i) == correctWord.charAt(i)) {
+
+            StringBuilder guessTemp = new StringBuilder(guess);
+            StringBuilder correctWordTemp = new StringBuilder(correctWord);
+            char alreadyProcessedChar = '#';
+
+            for (int i = 0; i < guessTemp.length(); i++) {
+                if (guessTemp.charAt(i) == correctWord.charAt(i)) {
+                    // Учитываем букву, которая ЕСТЬ в загаданном слове и находится на правильной позиции.
                     charStatuses.add(CharStatus.CORRECT);
                     correctLetters.add(new CorrectLetterInfo(guess.charAt(i), i));
 
-                } else if (correctWord.indexOf(guess.charAt(i)) == -1) {
+                    // Замена на недопустимый символ, чтобы исключить из поиска букв WRONG_POSITION
+                    correctWordTemp.setCharAt(i, alreadyProcessedChar);
+                    // Исключаем из поиска (уже нашли)
+                    guessTemp.setCharAt(i, alreadyProcessedChar);
+
+                } else if (correctWordTemp.toString().indexOf(guessTemp.charAt(i)) == -1) {
+                    // Учитываем букву, которой НЕТ в загаданном слове
                     charStatuses.add(CharStatus.ABSENT);
-                    absentLetters.add(guess.charAt(i));
+                    absentLetters.add(guessTemp.charAt(i));
+
+                    // Исключаем из дальнейшего поиска
+                    guessTemp.setCharAt(i, alreadyProcessedChar);
+                } else {
+                    // Статус буквы пока не известен
+                    charStatuses.add(null);
+                }
+            }
+
+            for (int i = 0; i < guessTemp.length(); i++) {
+                if (guessTemp.charAt(i) == alreadyProcessedChar) {
+                    continue;
+                }
+                int indexOfWrongPositionLetter = correctWordTemp.toString().indexOf(guessTemp.charAt(i));
+                if (indexOfWrongPositionLetter == -1) {
+                    // Лишняя буква, помечаем отсутствующей
+                    charStatuses.set(i, CharStatus.ABSENT);
+                    absentLetters.add(guessTemp.charAt(i));
 
                 } else {
-                    charStatuses.add(CharStatus.WRONG_POSITION);
-                    wrongPositionLetters.add(guess.charAt(i));
+                    charStatuses.set(i, CharStatus.WRONG_POSITION);
+                    wrongPositionLetters.add(guessTemp.charAt(i));
+                    // Замена на недопустимый символ, чтобы исключить из дальнейшего поиска букв WRONG_POSITION
+                    correctWordTemp.setCharAt(indexOfWrongPositionLetter, alreadyProcessedChar);
                 }
             }
         }
