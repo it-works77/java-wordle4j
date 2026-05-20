@@ -3,9 +3,7 @@ package ru.yandex.practicum.model;
 import ru.yandex.practicum.config.WordleConfig;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Objects;
 
 public class AnswerCheckResult {
     private final String guess;
