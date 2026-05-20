@@ -1,6 +1,6 @@
 package ru.yandex.practicum.exception.wordchecks;
 
-public class WordCheckException extends Throwable {
+public class WordCheckException extends Exception {
     public WordCheckException() {
     }
 

@@ -17,14 +17,17 @@ import java.util.Objects;
     вывести состояние игры и конечный результат
  */
 public class Wordle {
-    public static WordleDictionaryLoader wdl;
-    public static WordleDictionary wd;
-    public static WordleGame game;
-    public static WordleLogger logger;
+
 
 
     public static void main(String[] args) {
+        WordleDictionaryLoader wdl;
+        WordleDictionary wd;
+        WordleGame game;
+        WordleLogger logger = null;
+
         try {
+
             // создать лог-файл (он должен передаваться во все классы)
             logger = new WordleLogger(WordleConfig.LOG_LEVEL, WordleConfig.LOG_FILENAME);
             logger.warning("Старт приложения...");

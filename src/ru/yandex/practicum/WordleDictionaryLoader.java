@@ -12,6 +12,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 /*
 этот класс содержит в себе всю рутину по работе с файлами словарей и с кодировками
@@ -37,8 +38,7 @@ public class WordleDictionaryLoader {
             String dictLine;
             int lineCount = 0;
 
-            while (br.ready()) {
-                dictLine = br.readLine();
+            while ((dictLine = br.readLine()) != null) {
                 lineCount++;
                 if (lineCount % WordleConfig.LOG_LINES_READ_SAMPLER == 0)
                     logger.info("Прочитано %d слов".formatted(lineCount));
