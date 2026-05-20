@@ -12,7 +12,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Objects;
 
 /*
 этот класс содержит в себе всю рутину по работе с файлами словарей и с кодировками
